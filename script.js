@@ -2,8 +2,20 @@ const memoryGrid = document.querySelector("#memory-grid");
 const timelineList = document.querySelector("#timeline-list");
 const categoryFilter = document.querySelector("#category-filter");
 const memoryCount = document.querySelector("#memory-count");
+const memberTabs = document.querySelectorAll(".member-tab");
+const memberNameInput = document.querySelector("#member-name");
+const photoUpload = document.querySelector("#photo-upload");
+const photoPreview = document.querySelector("#photo-preview");
+const memberStatus = document.querySelector("#member-status");
 
 let memories = [];
+let activeMemberId = "member-1";
+let familyState = {
+  "member-1": { name: "구성원 1", photos: [] },
+  "member-2": { name: "구성원 2", photos: [] },
+  "member-3": { name: "구성원 3", photos: [] },
+  "member-4": { name: "구성원 4", photos: [] },
+};
 
 function escapeHtml(value) {
   return String(value)
@@ -104,6 +116,83 @@ function applyFilter() {
   renderTimeline(filtered);
 }
 
+function loadFamilyState() {
+  try {
+    const saved = localStorage.getItem("family-memory-members");
+    if (!saved) {
+      return;
+    }
+
+    familyState = { ...familyState, ...JSON.parse(saved) };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function saveFamilyState() {
+  try {
+    localStorage.setItem("family-memory-members", JSON.stringify(familyState));
+  } catch (error) {
+    memberStatus.textContent =
+      "브라우저 저장 공간이 부족합니다. 사진 수나 파일 크기를 줄여 주세요.";
+    console.error(error);
+  }
+}
+
+function syncMemberTabs() {
+  memberTabs.forEach((tab) => {
+    const member = familyState[tab.dataset.member];
+    const isActive = tab.dataset.member === activeMemberId;
+
+    tab.textContent = member.name || tab.dataset.member;
+    tab.classList.toggle("is-active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+  });
+}
+
+function renderMemberPanel() {
+  const member = familyState[activeMemberId];
+  memberNameInput.value = member.name;
+  memberStatus.textContent = `사진 ${member.photos.length}장`;
+
+  if (!member.photos.length) {
+    photoPreview.innerHTML = `<div class="empty-photos">아직 선택한 사진이 없습니다.</div>`;
+    return;
+  }
+
+  photoPreview.innerHTML = member.photos
+    .map(
+      (photo, index) => `
+        <div class="photo-tile">
+          <img src="${escapeHtml(photo)}" alt="${escapeHtml(member.name)} 사진 ${index + 1}" />
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(reader.result));
+    reader.addEventListener("error", () => reject(reader.error));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handlePhotoUpload(event) {
+  const files = [...event.target.files].filter((file) => file.type.startsWith("image/"));
+  if (!files.length) {
+    return;
+  }
+
+  const encodedPhotos = await Promise.all(files.map(readFileAsDataUrl));
+  familyState[activeMemberId].photos.push(...encodedPhotos);
+  saveFamilyState();
+  renderMemberPanel();
+  photoUpload.value = "";
+}
+
 async function loadMemories() {
   try {
     const response = await fetch("data/memories.json");
@@ -126,4 +215,20 @@ async function loadMemories() {
 }
 
 categoryFilter.addEventListener("change", applyFilter);
+memberTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    activeMemberId = tab.dataset.member;
+    syncMemberTabs();
+    renderMemberPanel();
+  });
+});
+memberNameInput.addEventListener("input", () => {
+  familyState[activeMemberId].name = memberNameInput.value.trim() || activeMemberId;
+  saveFamilyState();
+  syncMemberTabs();
+});
+photoUpload.addEventListener("change", handlePhotoUpload);
+loadFamilyState();
+syncMemberTabs();
+renderMemberPanel();
 loadMemories();

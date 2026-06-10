@@ -15,6 +15,7 @@
       <nav class="nav" aria-label="주요 메뉴">
         <a class="brand" href="#top" aria-label="홈으로 이동">우리 가족 기록장</a>
         <div class="nav-links">
+          <a href="#family">가족</a>
           <a href="#memories">추억</a>
           <a href="#add-guide">기록 방법</a>
           <a href="#timeline">타임라인</a>
@@ -49,6 +50,50 @@
           서버 없이도 열 수 있으며, 추억 목록은 <code>data/memories.json</code>
           파일을 수정해 관리합니다.
         </p>
+      </section>
+
+      <section id="family" class="section family" aria-labelledby="family-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Family</p>
+            <h2 id="family-title">가족 구성원</h2>
+          </div>
+          <p class="section-note">
+            선택한 사진은 현재 브라우저에만 저장됩니다.
+          </p>
+        </div>
+
+        <div class="member-tabs" role="tablist" aria-label="가족 구성원 선택">
+          <button class="member-tab is-active" type="button" role="tab" aria-selected="true" data-member="member-1">
+            구성원 1
+          </button>
+          <button class="member-tab" type="button" role="tab" aria-selected="false" data-member="member-2">
+            구성원 2
+          </button>
+          <button class="member-tab" type="button" role="tab" aria-selected="false" data-member="member-3">
+            구성원 3
+          </button>
+          <button class="member-tab" type="button" role="tab" aria-selected="false" data-member="member-4">
+            구성원 4
+          </button>
+        </div>
+
+        <article class="member-panel" aria-live="polite">
+          <div class="member-panel-copy">
+            <label class="name-field">
+              <span>이름</span>
+              <input id="member-name" type="text" autocomplete="off" />
+            </label>
+            <p id="member-status" class="member-status">사진 0장</p>
+          </div>
+
+          <label class="upload-box">
+            <input id="photo-upload" type="file" accept="image/*" multiple />
+            <span>사진 선택</span>
+          </label>
+
+          <div id="photo-preview" class="photo-preview" aria-label="업로드한 사진 미리보기"></div>
+        </article>
       </section>
 
       <section id="memories" class="section" aria-labelledby="memories-title">
