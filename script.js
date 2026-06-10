@@ -7,6 +7,7 @@ const memberNameInput = document.querySelector("#member-name");
 const photoUpload = document.querySelector("#photo-upload");
 const photoPreview = document.querySelector("#photo-preview");
 const memberStatus = document.querySelector("#member-status");
+const themeToggle = document.querySelector("#theme-toggle");
 
 let memories = [];
 let activeMemberId = "member-1";
@@ -16,6 +17,33 @@ let familyState = {
   "member-3": { name: "구성원 3", photos: [] },
   "member-4": { name: "구성원 4", photos: [] },
 };
+
+function applyTheme(theme) {
+  const safeTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = safeTheme;
+  themeToggle.textContent = safeTheme === "dark" ? "라이트 모드" : "다크 모드";
+  themeToggle.setAttribute(
+    "aria-label",
+    safeTheme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환",
+  );
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem("family-memory-theme");
+  if (savedTheme) {
+    applyTheme(savedTheme);
+    return;
+  }
+
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(prefersDark ? "dark" : "light");
+}
+
+function toggleTheme() {
+  const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem("family-memory-theme", nextTheme);
+  applyTheme(nextTheme);
+}
 
 function escapeHtml(value) {
   return String(value)
@@ -228,6 +256,8 @@ memberNameInput.addEventListener("input", () => {
   syncMemberTabs();
 });
 photoUpload.addEventListener("change", handlePhotoUpload);
+themeToggle.addEventListener("click", toggleTheme);
+loadTheme();
 loadFamilyState();
 syncMemberTabs();
 renderMemberPanel();
