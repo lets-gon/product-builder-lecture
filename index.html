@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>우리 가족 추억 기록장</title>
+    <meta
+      name="description"
+      content="가족과 함께한 사진, 날짜, 장소, 이야기를 모아두는 정적 HTML 추억 기록 홈페이지"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="주요 메뉴">
+        <a class="brand" href="#top" aria-label="홈으로 이동">우리 가족 기록장</a>
+        <div class="nav-links">
+          <a href="#memories">추억</a>
+          <a href="#add-guide">기록 방법</a>
+          <a href="#timeline">타임라인</a>
+        </div>
+      </nav>
+
+      <section id="top" class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Family Memory Archive</p>
+          <h1>함께한 하루들을 오래 꺼내볼 수 있게</h1>
+          <p>
+            사진, 장소, 날짜, 짧은 이야기를 한곳에 모아 가족의 시간을 기록하는
+            홈페이지입니다.
+          </p>
+        </div>
+        <div class="hero-panel" aria-label="전체 기록 요약">
+          <span class="panel-label">전체 기록</span>
+          <strong id="memory-count">0</strong>
+          <span>개의 추억이 준비되어 있습니다</span>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section class="section intro" aria-labelledby="intro-title">
+        <div>
+          <p class="eyebrow">About</p>
+          <h2 id="intro-title">기록은 간단하게, 보관은 오래가게</h2>
+        </div>
+        <p>
+          이 페이지는 GitHub Pages에 올릴 수 있는 정적 HTML 사이트입니다.
+          서버 없이도 열 수 있으며, 추억 목록은 <code>data/memories.json</code>
+          파일을 수정해 관리합니다.
+        </p>
+      </section>
+
+      <section id="memories" class="section" aria-labelledby="memories-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Memories</p>
+            <h2 id="memories-title">가족 추억</h2>
+          </div>
+          <label class="filter">
+            <span>분류</span>
+            <select id="category-filter" aria-label="추억 분류 필터">
+              <option value="all">전체</option>
+            </select>
+          </label>
+        </div>
+        <div id="memory-grid" class="memory-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="add-guide" class="section guide" aria-labelledby="guide-title">
+        <div>
+          <p class="eyebrow">How to Update</p>
+          <h2 id="guide-title">새 추억 추가 방법</h2>
+        </div>
+        <ol class="steps">
+          <li><code>assets/photos/</code> 폴더에 사진을 넣습니다.</li>
+          <li><code>data/memories.json</code>에 날짜, 제목, 장소, 설명을 추가합니다.</li>
+          <li>변경 사항을 commit 후 GitHub에 push하면 홈페이지에 반영됩니다.</li>
+        </ol>
+      </section>
+
+      <section id="timeline" class="section" aria-labelledby="timeline-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Timeline</p>
+            <h2 id="timeline-title">시간순 기록</h2>
+          </div>
+        </div>
+        <div id="timeline-list" class="timeline" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>우리 가족 추억 기록장 · GitHub Pages용 정적 HTML 홈페이지</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
